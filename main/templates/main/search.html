@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/feather-icons"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+	<title>ZAMS - Accueil</title>
+</head>
+<body>
+	<div>
+		<nav class="navbar navbar-expand-lg bg-light">
+
+		  <div class="container-fluid">
+		    <a class="navbar-brand" href="{% url 'index' %}"><h3>ZAMS</h3></a>
+		    
+		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		      <span class="navbar-toggler-icon"></span>
+		    </button>
+
+		    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		      	<li class="nav-item">
+		          <a class="nav-link" href="{% url 'index' %}">Accueil</a>
+		        </li>
+		        {% if user.is_authenticated %}
+		        <li class="nav-item">
+		          <a class="nav-link" aria-current="page" href="{% url 'mesFilms' %}">Mes films</a>
+		        </li>
+		        {% else %}
+		      	<li class="nav-item">
+		          <a class="nav-link" href="{% url 'login' %}">Se connecter</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link" href="{% url 'register' %}">Créer un compte</a>
+		        </li>
+		        {% endif %}
+		        <li class="nav-item">
+		          <a class="nav-link" href="{% url 'recommandation' %}">Recommandations</a>
+		        </li>
+		        <li class="nav-item">
+		          <a class="nav-link active" href="{% url 'films' %}">Films</a>
+		        </li>
+		      </ul>
+
+		      <form class="d-flex" role="search" method="POST">
+                          {% csrf_token %}
+                            <input class="form-control me-2" type="Rechercher" placeholder="Search" aria-label="Search" name="search_string">
+                            <button class="btn btn-outline-success" type="submit" value="search" name="search">
+                                <i data-feather="search"></i>
+                            </button>
+                        </form>
+
+		    </div>
+		  </div>
+		</nav>
+	</div>
+
+	<div class="w-25 mx-auto">
+		<form method="POST">
+			{% csrf_token %}
+			
+			<input id="pageActuelle" name="pageActuelle" type="hidden" value="{{pageActuelle}}">
+			<input id="maxPages" name="maxPages" type="hidden" value="{{maxPages}}">
+
+			<div class="d-flex justify-content-center mt-4">
+				<nav aria-label="Page navigation example">
+				  <ul class="pagination">
+				    <li class="page-item">
+				    	<button type="submit" name="previousPage" type="button" class="btn btn-link page-link">&laquo;</button>
+				    </li>
+				    <li class="page-item"><a class="page-link disabled" href="#">{{pageActuelle}}/{{maxPages}}</a></li>
+				    <li class="page-item">
+				      <button type="submit" name="nextPage" type="button" class="btn btn-link page-link">&raquo;</button>
+				      </a>
+				    </li>
+				  </ul>
+				</nav>
+			</div>
+
+		</form>
+	</div>
+
+	<div class="container mw-100">
+		<div class="row mx-auto">
+			{% for film in movies %}
+				<div class="col text-center mb-4">
+					<div class="d-flex flex-column">
+						<a href="{% url 'fiche' film.id %}" class="d-block">
+							<h4><span class="d-inline-block text-truncate" style="max-width: 320px;">{{ film.title }}</span></h4>
+							<img src="https://image.tmdb.org/t/p/original/{{film.poster_path}}" width="320">
+						</a>
+
+						<div class="d-flex justify-content-evenly mx-auto mt-2" style="max-width: 320px;"> 
+		                  {% for stars in film.stars_filled %}
+		                  	<i class="bi bi-star-fill" each="{item in this.state.etoile_remplie}"></i>
+		                  {% endfor %}
+		                  {% for stars in film.stars_empty %}
+		                  	<i class="bi bi-star" each="{item in this.state.etoile_vide}"></i>
+		                  {% endfor %}
+		                  <div class="col-md-2" > {{film.vote_average}}</div>
+		                </div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+</body>
+
+<script>
+	feather.replace()
+</script>
+
+</html>

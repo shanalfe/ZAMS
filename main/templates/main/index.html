@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/feather-icons"></script>
+        <title>ZAMS - Accueil</title>
+    </head>
+    <body>
+        <div>
+            <nav class="navbar navbar-expand-lg bg-light">
+
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'index' %}">
+                        <h3>ZAMS</h3>
+                    </a>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{% url 'index' %}">Accueil</a>
+                            </li>
+                            {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page" href="{% url 'mesFilms' %}">Mes films</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Se déconnecter</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'login' %}">Se connecter</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'register' %}">Créer un compte</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'recommandation' %}">Recommandations</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'films' %}">Films</a>
+                            </li>
+                        </ul>
+
+                        {% if user.is_authenticated %}
+                        <p> Bon visionnage {{ user.username }} ! </p>
+                        {% endif %}
+                        <form class="d-flex" role="search" method="POST">
+                          {% csrf_token %}
+                            <input class="form-control me-2" type="Rechercher" placeholder="Search" aria-label="Search" name="search_string">
+                            <button class="btn btn-outline-success" type="submit" value="search" name="search">
+                                <i data-feather="search"></i>
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="w-50 mx-auto my-4">
+            {% if user.is_authenticated %}
+            <h1 class="text-center">Bienvenue sur Zams !</h1>
+            {% endif %}
+            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for carousel_movie in carousel %}
+                    <div
+                    {% if carousel_active == carousel_movie %} 
+                    class="carousel-item active" 
+                    {% else %} 
+                    class="carousel-item" 
+                    {% endif %}
+                    data-bs-interval="5000">
+                        <img src="https://image.tmdb.org/t/p/original/{{carousel_movie.backdrop_path}}" class="d-block w-100 img-fluid" alt="affiche d'un film">
+                        <div class="carousel-caption d-none d-md-block"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+            <div>
+        {% if user.is_authenticated %}
+        {% else %}
+	<div class="container">
+		<div class="row">
+			<div class="btn-group" role="group">
+				<a type="button" class="btn btn-success btn-lg mx-1" href="{% url 'register' %}"><h3>Créer un compte</h3></a>
+				<a type="button" class="btn btn-success btn-lg mx-1" href="{% url 'login' %}"><h3>Se connecter</h3></a>
+			</div>
+		</div>
+	{% endif %}
+	</div>
+            </div>
+
+            <div class="container mt-4">
+                <h4>Vous allez également aimer</h4>
+                <div class="row">
+                    {% for film in index_movies %}
+                    <div class="col">
+                        <a href="{% url 'fiche' film.id %}"><img src="https://image.tmdb.org/t/p/original/{{film.poster_path}}" class="img-fluid" alt="affiche d'un film"></a>
+                        <p class="text-center">{{ film.title }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </body>
+
+        <script>
+            feather.replace()
+        </script>
+    </body>
+</html>

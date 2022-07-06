@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <h1> Titre : {{ movie.title }}</h1>
+  <h1> Note : {{ movie.vote_average }}</h1>
+  <img src="https://image.tmdb.org/t/p/original/{{movie.poster_path}}" alt="" srcset="">
+  <form method="POST">
+	  {% csrf_token %}
+    <button type="submit" value="Like"> Like</button>
+  </form>
+</html>
